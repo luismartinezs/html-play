@@ -14,6 +14,8 @@ const player = {
   dy: 0,
 };
 
+const obstacles = [];
+
 const keys = {};
 
 const drawPlayer = () => {
@@ -44,9 +46,58 @@ const updatePlayerPosition = () => {
   if (player.y + player.height > canvas.height) player.y = canvas.height - player.height;
 };
 
+function createObstacle() {
+  const obstacle = {
+    x: Math.random() * (canvas.width - 20),
+    y: 0,
+    width: 10,
+    height: 10,
+    speed: 1 + Math.random() * 2
+  };
+  obstacles.push(obstacle);
+}
+
+function didPlayerCollideWithObstacle() {
+  return obstacles.some((obstacle) => {
+    return player.x < obstacle.x + obstacle.width &&
+      player.x + player.width > obstacle.x &&
+      player.y < obstacle.y + obstacle.height &&
+      player.y + player.height > obstacle.y;
+  });
+}
+
+function updateObstacles() {
+  obstacles.forEach((obstacle, index) => {
+    obstacle.y += obstacle.speed;
+
+    // Remove obstacle if it's off the screen
+    if (obstacle.y > canvas.height) {
+      obstacles.splice(index, 1);
+    }
+
+    // Check collision with player
+    if (didPlayerCollideWithObstacle()) {
+      console.log("Collision detected!");
+      // Add game over logic here
+    }
+  });
+}
+
+const drawObstacles = () => {
+  ctx.fillStyle = "hsl(0, 100%, 50%)"; // Red color for obstacles
+  obstacles.forEach((obstacle) => {
+    ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+  });
+};
+
 const update = () => {
+  if (Math.random() < 0.02) {
+    createObstacle();
+  }
+  updateObstacles();
   updatePlayerPosition();
   clearCanvas();
+  drawObstacles(); // Add this line
   drawPlayer();
   requestAnimationFrame(update);
 };

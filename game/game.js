@@ -12,6 +12,7 @@ const player = {
   speed: 2,
   dx: 0,
   dy: 0,
+  alive: true, // Add this line
 };
 
 const obstacles = [];
@@ -19,8 +20,10 @@ const obstacles = [];
 const keys = {};
 
 const drawPlayer = () => {
-  ctx.fillStyle = "hsl(60, 100%, 50%)";
-  ctx.fillRect(player.x, player.y, player.width, player.height);
+  if (player.alive) {
+    ctx.fillStyle = "hsl(60, 100%, 50%)";
+    ctx.fillRect(player.x, player.y, player.width, player.height);
+  }
 };
 
 const clearCanvas = () => {
@@ -76,9 +79,9 @@ function updateObstacles() {
     }
 
     // Check collision with player
-    if (didPlayerCollideWithObstacle()) {
+    if (player.alive && didPlayerCollideWithObstacle()) {
       console.log("Collision detected!");
-      // Add game over logic here
+      player.alive = false; // Set player to not alive
     }
   });
 }
@@ -91,15 +94,22 @@ const drawObstacles = () => {
 };
 
 const update = () => {
-  if (Math.random() < 0.02) {
-    createObstacle();
+  if (player.alive) {
+    if (Math.random() < 0.02) {
+      createObstacle();
+    }
+    updateObstacles();
+    updatePlayerPosition();
   }
-  updateObstacles();
-  updatePlayerPosition();
   clearCanvas();
-  drawObstacles(); // Add this line
+  drawObstacles();
   drawPlayer();
-  requestAnimationFrame(update);
+  if (player.alive) {
+    requestAnimationFrame(update);
+  } else {
+    console.log("Game Over");
+    // You can add any additional game over logic here
+  }
 };
 
 const handleKeyDown = (e) => {

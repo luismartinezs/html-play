@@ -15,6 +15,8 @@ const player = {
   alive: true, // Add this line
 };
 
+let gameLoop = 0; // gameLoop is appox 200 = 1 second
+
 const obstacles = [];
 
 const keys = {};
@@ -93,9 +95,28 @@ const drawObstacles = () => {
   });
 };
 
+const renderLoopLabel = () => {
+  ctx.fillStyle = "white";
+  ctx.font = "12px Arial";
+  ctx.fillText(gameLoop, 10, 20);
+};
+
+/**
+ * Determines whether an obstacle should be created based on the game loop count.
+ *
+ * @param {number} rateIncrease - A multiplier that affects the rate of obstacle creation.
+ *                                Recommended values are between 1 and 100.
+ *                                Higher values will decrease the frequency of obstacle creation.
+ * @returns {boolean} - Returns true if an obstacle should be created, otherwise false.
+ */
+function shouldCreateObstacle(rateIncrease = 1) {
+  return Math.random() < 0.02 * rateIncrease * gameLoop / 1000
+}
+
 const update = () => {
+  gameLoop++;
   if (player.alive) {
-    if (Math.random() < 0.02) {
+    if (shouldCreateObstacle()) {
       createObstacle();
     }
     updateObstacles();
@@ -104,6 +125,7 @@ const update = () => {
   clearCanvas();
   drawObstacles();
   drawPlayer();
+  renderLoopLabel();
   if (player.alive) {
     requestAnimationFrame(update);
   } else {

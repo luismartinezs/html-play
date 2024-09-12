@@ -1,0 +1,31 @@
+body {
+  font-family: sans-serif, Arial;
+}
+
+.container {
+  container-name: container;
+  container-type: inline-size;
+}
+
+.parent {
+  background-color: hsl(220, 20%, 70%);
+  display: flex;
+  flex-direction: row;
+  max-height: 15rem;
+  height: 15rem;
+  width: 100%;
+  overflow: hidden;
+}
+
+.child {
+  margin: 1rem;
+  background-color: hsl(180, 20%, 70%);
+  flex: 1;
+  overflow: auto;
+}
+
+@container container (min-width: 700px) {
+  .parent {
+    flex-direction: column;
+  }
+}
